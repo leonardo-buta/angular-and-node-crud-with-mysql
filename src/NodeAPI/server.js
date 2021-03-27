@@ -14,6 +14,8 @@ app.get("/", (req, res) => {
     res.json({ message: "Node API working!" });
 });
 
+require("./app/routes/client.routes")(app);
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
