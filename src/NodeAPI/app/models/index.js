@@ -1,4 +1,4 @@
-const dbConfig = require("../config/db.config.js");
+const dbConfig = require("../config/db.config");
 const Sequelize = require("sequelize");
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     host: dbConfig.host,
@@ -13,6 +13,6 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 });
 
 const db = { Sequelize: Sequelize, sequelize: sequelize };
-db.clients = require("./client.model.js")(sequelize, Sequelize);
+db.clients = require("./client.model")(sequelize, Sequelize.DataTypes);
 
 module.exports = db;

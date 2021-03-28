@@ -2,8 +2,9 @@ const db = require("../models");
 const Client = db.clients;
 const Op = db.Sequelize.Op;
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
     let errors = [];
+
     if (!req.body.firstName) {
         errors.push("First Name cannot be empty");
     }
@@ -24,27 +25,25 @@ exports.create = (req, res) => {
         return;
     }
 
-    let client = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email
-    };
+    let [client, created] = await Client.findOrCreate({
+        where: { email: req.body.email }, defaults: {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            active: true
+        }
+    });
 
-    Client.create(client)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(error => {
-            res.status(500).send({
-                message:
-                    error.message || "Error creating the object"
-            });
-        });
-};
+    if (created) {
+        res.send({ message: "Client created", record: client });
+    } else {
+        res.status(400).send({ message: "Email already in use" });
+    }
+}
 
 exports.findAll = (req, res) => {
-    let name = req.query.name;
-    let condition = name ? { firstName: { [Op.like]: `%${name}` } } : null;
+    let name = req.query.firstName;
+    let condition = name ? { firstName: { [Op.like]: `%${name}%` } } : null;
 
     Client.findAll({ where: condition })
         .then(data => {
@@ -114,5 +113,4 @@ exports.delete = (req, res) => {
                 message: "Error deleting Client"
             });
         });
-
 };
