@@ -116,7 +116,7 @@ exports.update = async (req, res) => {
             let client = await Client.findByPk(id);
             res.send({ message: "Client updated", record: client });
         } else {
-            res.send({ message: "Error. Client not updated" });
+            res.send({ message: "Error. Client not updated. Check if id is valid" });
         }
     }
     catch (e) {
@@ -124,22 +124,21 @@ exports.update = async (req, res) => {
     }
 };
 
-exports.delete = (req, res) => {
-    let id = req.params.id;
+exports.delete = async (req, res) => {
+    try {
+        let id = req.params.id;
 
-    Client.destroy({
-        where: { id: id }
-    })
-        .then(data => {
-            if (data == 1) {
-                res.send({ message: "Client deleted" });
-            } else {
-                res.send({ message: "Error. Client not deleted" });
-            }
-        })
-        .catch(error => {
-            res.status(500).send({
-                message: "Error deleting Client"
-            });
+        let deleted = await Client.destroy({
+            where: { id: id }
         });
+
+        if (deleted == 1) {
+            res.send({ message: "Client deleted" });
+        } else {
+            res.send({ message: "Error. Client not deleted. Check if id is valid" });
+        }
+    }
+    catch (e) {
+        return res.status(400).json({ message: e.message });
+    }
 };
