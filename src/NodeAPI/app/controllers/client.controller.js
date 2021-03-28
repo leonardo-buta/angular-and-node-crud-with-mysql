@@ -3,59 +3,66 @@ const Client = db.clients;
 const Op = db.Sequelize.Op;
 
 exports.create = async (req, res) => {
-    let errors = [];
+    try {
+        let errors = [];
 
-    if (!req.body.firstName) {
-        errors.push("First Name cannot be empty");
-    }
-
-    if (!req.body.lastName) {
-        errors.push("Last Name cannot be empty");
-    }
-
-    if (!req.body.email) {
-        errors.push("Email cannot be empty");
-    }
-
-    if (errors.length > 0) {
-        res.status(400).send({
-            message: "Validation errors has occurred",
-            errors: errors
-        });
-        return;
-    }
-
-    let [client, created] = await Client.findOrCreate({
-        where: { email: req.body.email }, defaults: {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            active: true
+        if (!req.body.firstName) {
+            errors.push("First Name cannot be empty");
         }
-    });
 
-    if (created) {
-        res.send({ message: "Client created", record: client });
-    } else {
-        res.status(400).send({ message: "Email already in use" });
+        if (!req.body.lastName) {
+            errors.push("Last Name cannot be empty");
+        }
+
+        if (!req.body.email) {
+            errors.push("Email cannot be empty");
+        }
+
+        if (errors.length > 0) {
+            res.status(400).send({
+                message: "Validation errors has occurred",
+                errors: errors
+            });
+            return;
+        }
+
+        let [client, created] = await Client.findOrCreate({
+            where: { email: req.body.email }, defaults: {
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                email: req.body.email,
+                active: true
+            }
+        });
+
+        if (created) {
+            res.send({ message: "Client created", record: client });
+        } else {
+            res.status(400).send({ message: "Email already in use" });
+        }
+    } catch (e) {
+        return res.status(400).json({ message: e.message });
     }
 }
 
-exports.findAll = (req, res) => {
-    let name = req.query.firstName;
-    let condition = name ? { firstName: { [Op.like]: `%${name}%` } } : null;
+exports.findAll = async (req, res) => {
+    try {
+        let firstName = req.query.firstName;
+        let lastName = req.query.lastName;
+        let email = req.query.email;
 
-    Client.findAll({ where: condition })
-        .then(data => {
-            res.send(data);
-        })
-        .catch(error => {
-            res.status(500).send({
-                message:
-                    error.message || "Error retrieving object"
-            });
-        });
+        let condition = {
+            ...(firstName && { firstName: { [Op.like]: `%${firstName}%` } }),
+            ...(lastName && { lastName: { [Op.like]: `%${lastName}%` } }),
+            ...(email && { email: { [Op.like]: `%${email}%` } })
+        };
 
+        let clients = await Client.findAll({ where: condition });
+
+        res.send({ count: clients.length, result: clients });
+    } catch (e) {
+        return res.status(400).json({ message: e.message });
+    }
 };
 
 exports.findOne = (req, res) => {
