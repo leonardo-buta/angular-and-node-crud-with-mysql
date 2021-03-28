@@ -65,19 +65,19 @@ exports.findAll = async (req, res) => {
     }
 };
 
-exports.findOne = (req, res) => {
-    let id = req.params.id;
+exports.findOne = async (req, res) => {
+    try {
+        let id = req.params.id;
+        let client = await Client.findByPk(id);
 
-    Client.findByPk(id)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(error => {
-            res.status(500).send({
-                message:
-                    error.message || `Error retrieving the object with ${id}`
-            });
-        });
+        if (client) {
+            res.send(client);
+        } else {
+            res.sendStatus(404);
+        }
+    } catch (e) {
+        return res.status(400).json({ message: e.message });
+    }
 };
 
 exports.update = (req, res) => {
