@@ -23,7 +23,6 @@ exports.create = async (req, res) => {
                 message: "Validation errors has occurred",
                 errors: errors
             });
-            return;
         }
 
         let [client, created] = await Client.findOrCreate({
@@ -80,26 +79,49 @@ exports.findOne = async (req, res) => {
     }
 };
 
-exports.update = (req, res) => {
-    let id = req.params.id;
+exports.update = async (req, res) => {
+    try {
+        let errors = [];
 
-    Client.update(req.body, {
-        where: { id: id }
-    })
-        .then(data => {
-            if (data == 1) {
-                res.send({ message: "Client updated" });
-            } else {
-                res.send({ message: "Error. Client not updated" });
-            }
+        if (!req.body.firstName) {
+            errors.push("First Name cannot be empty");
+        }
 
-        })
-        .catch(error => {
-            res.status(500).send({
-                message: "Error updating the client"
+        if (!req.body.lastName) {
+            errors.push("Last Name cannot be empty");
+        }
+
+        if (!req.body.email) {
+            errors.push("Email cannot be empty");
+        }
+
+        if (!req.body.active) {
+            errors.push("Active flag cannot be empty");
+        }
+
+        if (errors.length > 0) {
+            res.status(400).send({
+                message: "Validation errors has occurred",
+                errors: errors
             });
+        }
+
+        let id = req.params.id;
+
+        let updated = await Client.update(req.body, {
+            where: { id: id }
         });
 
+        if (updated == 1) {
+            let client = await Client.findByPk(id);
+            res.send({ message: "Client updated", record: client });
+        } else {
+            res.send({ message: "Error. Client not updated" });
+        }
+    }
+    catch (e) {
+        return res.status(400).json({ message: e.message });
+    }
 };
 
 exports.delete = (req, res) => {
