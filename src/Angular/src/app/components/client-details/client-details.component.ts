@@ -20,7 +20,7 @@ export class ClientDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.getClient(this.route.snapshot.params.id);
   }
-
+                                                                                       
   getClient(id: string): void {
     this.clientService.get(id)
       .subscribe(
