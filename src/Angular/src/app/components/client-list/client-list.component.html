@@ -1,1 +1,46 @@
-<p>client-list works!</p>
+<div class="list row">
+    <div class="col-md-8">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="First Name" />
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button">
+                    Search
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h4>Client List</h4>
+        <ul class="list-group">
+            <li class="list-group-item" *ngFor="let client of clients; let i = index" [class.active]="i == currentIndex"
+                (click)="setActiveClient(client, i)">
+                {{ client.firstName }}
+            </li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <div *ngIf="currentClient">
+            <h4>Client</h4>
+            <div>
+                <label><strong>First Name:</strong></label> {{ currentClient.firstName }}
+            </div>
+            <div>
+                <label><strong>Last Name:</strong></label>
+                {{ currentClient.lastName }}
+            </div>
+            <div>
+                <label><strong>Status:</strong></label>
+                {{ currentClient.active ? "Active" : "Not Active" }}
+            </div>
+
+            <a class="badge badge-warning" routerLink="/clients/{{ currentClient.id }}">
+                Edit
+            </a>
+        </div>
+
+        <div *ngIf="!currentClient">
+            <br />
+            <p>Please click on a Client...</p>
+        </div>
+    </div>
+</div>

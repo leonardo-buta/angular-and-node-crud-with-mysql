@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Client } from '../models/client.model';
+import { ClientSearchResults } from '../models/clientSearchResults.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,11 +12,11 @@ export class ClientService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<Client[]> {
-    return this.http.get<Client[]>(environment.apiUrl);
+  getAll(): Observable<ClientSearchResults> {
+    return this.http.get<ClientSearchResults>(environment.apiUrl);
   }
 
-  get(id: number): Observable<Client> {
+  get(id: any): Observable<Client> {
     return this.http.get(`${environment.apiUrl}/${id}`);
   }
 

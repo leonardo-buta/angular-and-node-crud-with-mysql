@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Client } from 'src/app/models/client.model';
+import { ClientService } from 'src/app/services/client.service';
 
 @Component({
   selector: 'app-client-list',
@@ -6,10 +8,34 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./client-list.component.css']
 })
 export class ClientListComponent implements OnInit {
+  clients?: Client[];
+  currentClient?: Client;
+  currentIndex = -1;
 
-  constructor() { }
+  constructor(private clientService: ClientService) { }
 
   ngOnInit(): void {
+    this.getclients();
   }
 
+  getclients(): void {
+    this.clientService.getAll()
+      .subscribe(data => {
+        this.clients = data.result;
+      },
+        error => {
+          console.log(error);
+        });
+  }
+
+  refreshList(): void {
+    this.getclients();
+    this.currentClient = new Client();
+    this.currentIndex = -1;
+  }
+
+  setActiveClient(client: Client, index: number): void {
+    this.currentClient = client;
+    this.currentIndex = index;
+  }
 }

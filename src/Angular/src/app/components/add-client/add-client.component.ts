@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Client } from 'src/app/models/client.model';
+import { ClientService } from 'src/app/services/client.service';
 
 @Component({
   selector: 'app-add-client',
@@ -7,9 +9,33 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AddClientComponent implements OnInit {
 
-  constructor() { }
+  client: Client = new Client();
+  submitted = false;
+
+  constructor(private clientService: ClientService) { }
 
   ngOnInit(): void {
   }
 
+  saveClient(): void {
+    let data = {
+      firstName: this.client.firstName,
+      lastName: this.client.lastName,
+      email: this.client.email
+    };
+
+    this.clientService.create(data)
+      .subscribe(response => {
+        console.log(response);
+        this.submitted = true;
+      },
+        error => {
+          console.log(error);
+        });
+  }
+
+  newClient() : void {
+    this.submitted = false;
+    this.client = new Client();
+  }
 }
