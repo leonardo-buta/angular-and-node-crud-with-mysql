@@ -14,15 +14,15 @@
 
       <div class="form-group">
         <label for="email">Email</label>
-        <input class="form-control" id="email" required [(ngModel)]="client.email" name="email" />
+        <input type="email" class="form-control" id="email" required [(ngModel)]="client.email" name="email" />
       </div>
 
       <button (click)="saveClient()" class="btn btn-success">Submit</button>
     </div>
 
     <div *ngIf="submitted">
-      <h4>Tutorial was submitted successfully!</h4>
-      <button class="btn btn-success" (click)="saveClient()">Add</button>
+      <h4>Client was submitted successfully!</h4>
+      <button class="btn btn-success" (click)="newClient()">Add</button>
     </div>
   </div>
 </div>

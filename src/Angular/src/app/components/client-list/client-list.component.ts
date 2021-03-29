@@ -9,8 +9,9 @@ import { ClientService } from 'src/app/services/client.service';
 })
 export class ClientListComponent implements OnInit {
   clients?: Client[];
-  currentClient?: Client;
+  currentClient?: Client = undefined;
   currentIndex = -1;
+  totalClients = 0;
 
   constructor(private clientService: ClientService) { }
 
@@ -22,6 +23,7 @@ export class ClientListComponent implements OnInit {
     this.clientService.getAll()
       .subscribe(data => {
         this.clients = data.result;
+        this.totalClients = data.count;
       },
         error => {
           console.log(error);

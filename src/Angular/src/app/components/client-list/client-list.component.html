@@ -14,9 +14,11 @@
         <ul class="list-group">
             <li class="list-group-item" *ngFor="let client of clients; let i = index" [class.active]="i == currentIndex"
                 (click)="setActiveClient(client, i)">
-                {{ client.firstName }}
+                {{ client.lastName }}
             </li>
         </ul>
+        <br>
+        <strong>Total clients:</strong> {{ totalClients }}
     </div>
     <div class="col-md-6">
         <div *ngIf="currentClient">
