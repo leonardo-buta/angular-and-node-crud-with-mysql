@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Client } from 'src/app/models/client.model';
 import { ClientService } from 'src/app/services/client.service';
 
@@ -15,15 +15,14 @@ export class ClientDetailsComponent implements OnInit {
 
   constructor(
     private clientService: ClientService,
+    private modalService: NgbModal,
     private route: ActivatedRoute,
-    private router: Router,
-    public modal: NgbActiveModal,
-    private modalService: NgbModal) { }
+    private router: Router) { }
 
   ngOnInit(): void {
     this.getClient(this.route.snapshot.params.id);
   }
-                                                                                       
+
   getClient(id: string): void {
     this.clientService.get(id)
       .subscribe(
@@ -51,16 +50,16 @@ export class ClientDetailsComponent implements OnInit {
     this.clientService.delete(this.currentClient.id)
       .subscribe(
         () => {
-          this.modal.dismiss();
+          this.modalService.dismissAll();
           this.router.navigate(['/clients']);
         },
         error => {
           console.log(error);
         }
-      )
+      );
   }
 
   open(content: any) {
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'});
+    this.modalService.open(content);
   }
 }
