@@ -12,6 +12,9 @@ export class ClientListComponent implements OnInit {
   currentClient?: Client = undefined;
   currentIndex = -1;
   totalClients = 0;
+  firstNameSearch = '';
+  lastNameSearch = '';
+  emailSearch = '';
 
   constructor(private clientService: ClientService) { }
 
@@ -32,12 +35,28 @@ export class ClientListComponent implements OnInit {
 
   refreshList(): void {
     this.getclients();
-    this.currentClient = new Client();
+    this.currentClient = undefined;
     this.currentIndex = -1;
+    this.firstNameSearch = '';
+    this.lastNameSearch = '';
+    this.emailSearch = '';
   }
 
   setActiveClient(client: Client, index: number): void {
     this.currentClient = client;
     this.currentIndex = index;
+  }
+
+  searchClient(): void {
+    this.clientService.getWithFilter(this.firstNameSearch, this.lastNameSearch, this.emailSearch)
+      .subscribe(data => {
+        this.clients = data.result;
+        this.totalClients = data.count;
+        this.currentClient = undefined;
+        this.currentIndex = -1;
+      },
+        error => {
+          console.log(error);
+        });
   }
 }

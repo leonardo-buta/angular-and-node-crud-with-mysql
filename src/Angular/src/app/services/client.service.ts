@@ -31,4 +31,8 @@ export class ClientService {
   delete(id: any): Observable<any> {
     return this.http.delete(`${environment.apiUrl}/${id}`);
   }
+
+  getWithFilter(firstName: string, lastName: string, email: string): Observable<ClientSearchResults> {
+    return this.http.get<ClientSearchResults>(`${environment.apiUrl}?firstName=${firstName}&lastName=${lastName}&email=${email}`);
+  }
 }

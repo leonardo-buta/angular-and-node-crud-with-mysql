@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Client } from 'src/app/models/client.model';
@@ -10,6 +10,7 @@ import { ClientService } from 'src/app/services/client.service';
   styleUrls: ['./client-details.component.css']
 })
 export class ClientDetailsComponent implements OnInit {
+  @ViewChild('updatedModal', { read: TemplateRef }) updatedModal: TemplateRef<any> | undefined;
   currentClient: Client = new Client();
   message = '';
 
@@ -40,9 +41,13 @@ export class ClientDetailsComponent implements OnInit {
       .subscribe(
         response => {
           this.message = response.message;
+          console.log(response);
         },
         error => {
+          this.message = error.message;
           console.log(error);
+        }).add(() => {
+          this.modalService.open(this.updatedModal);
         });
   }
 
