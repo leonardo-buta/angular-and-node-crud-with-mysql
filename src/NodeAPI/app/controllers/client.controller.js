@@ -95,7 +95,7 @@ exports.update = async (req, res) => {
             errors.push("Email cannot be empty");
         }
 
-        if (!req.body.active) {
+        if (typeof req.body.active === 'undefined') {
             errors.push("Active flag cannot be empty");
         }
 
@@ -116,7 +116,7 @@ exports.update = async (req, res) => {
             let client = await Client.findByPk(id);
             res.send({ message: "Client updated", record: client });
         } else {
-            res.send({ message: "Error. Client not updated. Check if id is valid" });
+            res.status(400).send({ message: "Error. Client not updated. Check if id is valid" });
         }
     }
     catch (e) {
@@ -135,7 +135,7 @@ exports.delete = async (req, res) => {
         if (deleted == 1) {
             res.send({ message: "Client deleted" });
         } else {
-            res.send({ message: "Error. Client not deleted. Check if id is valid" });
+            res.status(400).send({ message: "Error. Client not deleted. Check if id is valid" });
         }
     }
     catch (e) {
