@@ -1,28 +1,69 @@
 const db = require("../models");
 const Client = db.clients;
 const Op = db.Sequelize.Op;
+const { body, param, validationResult } = require("express-validator");
+
+exports.validate = (method) => {
+    switch (method) {
+        case "createClient": {
+            return [
+                body("firstName").exists().withMessage("Body must contain a firstName property")
+                    .isString().withMessage("firstName must be a string")
+                    .notEmpty({ ignore_whitespace: true }).withMessage("firstName cannot be empty")
+                    .isLength({ max: 255 }).withMessage("firstName length must be less or equal than 255"),
+                body("lastName").exists().withMessage("Body must contain a lastName property")
+                    .isString().withMessage("lastName must be a string")
+                    .notEmpty({ ignore_whitespace: true }).withMessage("lastName cannot be empty")
+                    .isLength({ max: 255 }).withMessage("lastName length must be less or equal than 255"),
+                body("email").exists().withMessage("Body must contain a email property")
+                    .notEmpty({ ignore_whitespace: true }).withMessage("email cannot be empty")
+                    .isLength({ max: 255 }).withMessage("firstName length must be less or equal than 255")
+                    .bail()
+                    .isEmail().withMessage("Invalid email")
+            ]
+        }
+        case "clientUpdate": {
+            return [
+                param("id").exists().withMessage("Path URL must contain a ID property")
+                    .isInt({ gt: 0 }).withMessage("Path URL ID must be a number and greater than 0"),
+                body("firstName").exists().withMessage("Body must contain a firstName property")
+                    .isString().withMessage("firstName must be a string")
+                    .notEmpty({ ignore_whitespace: true }).withMessage("firstName cannot be empty")
+                    .isLength({ max: 255 }).withMessage("firstName length must be less or equal than 255"),
+                body("lastName").exists().withMessage("Body must contain a lastName property")
+                    .isString().withMessage("lastName must be a string")
+                    .notEmpty({ ignore_whitespace: true }).withMessage("lastName cannot be empty")
+                    .isLength({ max: 255 }).withMessage("lastName length must be less or equal than 255"),
+                body("email").exists().withMessage("Body must contain a email property")
+                    .notEmpty({ ignore_whitespace: true }).withMessage("email cannot be empty")
+                    .isLength({ max: 255 }).withMessage("firstName length must be less or equal than 255")
+                    .bail()
+                    .isEmail().withMessage("Invalid email"),
+                body("active").exists().withMessage("Body must contain a active property")
+                    .isBoolean().withMessage("Active property must be true or false")
+            ]
+        }
+        case "deleteClient": {
+            return [
+                param("id").exists().withMessage("Path URL must contain a ID property")
+                    .isInt({ gt: 0 }).withMessage("Path URL ID must be a number and greater than 0")
+            ]
+        }
+        case "findOneClient": {
+            return [
+                param("id").exists().withMessage("Path URL must contain a ID property")
+                    .isInt({ gt: 0 }).withMessage("Path URL ID must be a number and greater than 0")
+            ]
+        }
+    }
+}
 
 exports.create = async (req, res) => {
     try {
-        let errors = [];
+        const errors = validationResult(req);
 
-        if (!req.body.firstName) {
-            errors.push("First Name cannot be empty");
-        }
-
-        if (!req.body.lastName) {
-            errors.push("Last Name cannot be empty");
-        }
-
-        if (!req.body.email) {
-            errors.push("Email cannot be empty");
-        }
-
-        if (errors.length > 0) {
-            res.status(400).send({
-                message: "Validation errors has occurred",
-                errors: errors
-            });
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
         }
 
         let [client, created] = await Client.findOrCreate({
@@ -66,6 +107,11 @@ exports.findAll = async (req, res) => {
 
 exports.findOne = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         let id = req.params.id;
         let client = await Client.findByPk(id);
 
@@ -81,29 +127,10 @@ exports.findOne = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        let errors = [];
+        const errors = validationResult(req);
 
-        if (!req.body.firstName) {
-            errors.push("First Name cannot be empty");
-        }
-
-        if (!req.body.lastName) {
-            errors.push("Last Name cannot be empty");
-        }
-
-        if (!req.body.email) {
-            errors.push("Email cannot be empty");
-        }
-
-        if (typeof req.body.active === 'undefined') {
-            errors.push("Active flag cannot be empty");
-        }
-
-        if (errors.length > 0) {
-            res.status(400).send({
-                message: "Validation errors has occurred",
-                errors: errors
-            });
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
         }
 
         let id = req.params.id;
@@ -126,6 +153,11 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         let id = req.params.id;
 
         let deleted = await Client.destroy({

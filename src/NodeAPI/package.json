@@ -19,6 +19,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "express-validator": "^6.10.0",
     "mysql2": "^2.2.5",
     "sequelize": "^6.5.1",
     "swagger-jsdoc": "^6.1.0",

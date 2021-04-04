@@ -99,7 +99,7 @@ module.exports = app => {
  *                   description: The error message
  *                   example: "Email already in use"
 */
-    router.post("/", clients.create);
+    router.post("/", clients.validate('createClient'), clients.create);
 
     /**
  * @swagger
@@ -154,7 +154,7 @@ module.exports = app => {
      *                 data:
      *                   $ref: '#/components/schemas/Client'
     */
-    router.get("/:id", clients.findOne);
+    router.get("/:id", clients.validate('findOneClient'), clients.findOne);
 
     /**
      * @swagger
@@ -203,7 +203,7 @@ module.exports = app => {
      *                   description: The error message
      *                   example: "Error. Client not updated. Check if id is valid"
     */
-    router.put("/:id", clients.update);
+    router.put("/:id", clients.validate('clientUpdate'), clients.update);
 
     /**
  * @swagger
@@ -244,7 +244,7 @@ module.exports = app => {
  *                   description: The error message
  *                   example: "Error. Client not deleted. Check if id is valid"
 */
-    router.delete("/:id", clients.delete);
+    router.delete("/:id", clients.validate('deleteClient'), clients.delete);
 
     // Router
     app.use("/api/clients", router);
