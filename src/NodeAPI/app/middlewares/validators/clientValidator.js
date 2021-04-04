@@ -11,7 +11,7 @@ exports.validateCreateClient = [
         .isLength({ max: 255 }).withMessage("lastName length must be less or equal than 255"),
     body("email").exists().withMessage("Body must contain a email property")
         .notEmpty({ ignore_whitespace: true }).withMessage("email cannot be empty")
-        .isLength({ max: 255 }).withMessage("firstName length must be less or equal than 255")
+        .isLength({ max: 255 }).withMessage("email length must be less or equal than 255")
         .bail()
         .isEmail().withMessage("Invalid email"),
     (req, res, next) => {
